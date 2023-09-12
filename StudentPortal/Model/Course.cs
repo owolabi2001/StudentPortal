@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StudentPortal.Model
@@ -8,9 +9,12 @@ namespace StudentPortal.Model
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public string CourseName { get; set; }
         [Required]
         public string Coursecode { get; set; }
         public int CourseUnit { get; set; }
+
+
         public DateTime CreatedDate { get; set; }
         public List<Student> students { get; set; } = new();
 

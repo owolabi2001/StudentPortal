@@ -29,7 +29,7 @@ namespace StudentPortal.Controllers
         {
             //return Ok(studentService.SaveStudent(student));
             GenericResponse response = studentService.SaveStudent(student);
-
+            logger.LogInformation("API designed to save student "+ student.MatricNo);
             if(response.Code == "11")
             {
                 return BadRequest(response);
@@ -37,5 +37,28 @@ namespace StudentPortal.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{Id:int}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public ActionResult<GenericResponse> getStudentById(int id)
+        {
+            GenericResponse response = studentService.getStudentById(id);
+            logger.LogInformation("API to get Student with the Id of: " + id);
+
+            if(response.Code == "11")
+            {
+                return BadRequest(response);
+            }
+            return Accepted(response);
+
+        }
+
+
+        [HttpGet]
+        public ActionResult<GenericResponse> getAllStudent()
+        {
+            var response = studentService.getAllStudent();
+            return Ok(response);
+        }
     }
 }
