@@ -8,6 +8,7 @@ namespace StudentPortal.Service
     {
         public GenericResponse getAllStudent();
         public GenericResponse getStudentById(int id);
+        public GenericResponse registercourse(List<string> courseCodes, string matricNo);
         public GenericResponse SaveStudent(StudentDto student);
     }
 }

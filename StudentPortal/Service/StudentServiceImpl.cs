@@ -11,9 +11,12 @@ namespace StudentPortal.Service
     {
 
         private readonly ApplicationDbContext db;
-        public StudentServiceImpl(ApplicationDbContext db)
+        private readonly ILogger<StudentServiceImpl> logger;
+
+        public StudentServiceImpl(ApplicationDbContext db, ILogger<StudentServiceImpl> logger)
         {
             this.db = db;
+            this.logger = logger;
         }
 
         public GenericResponse SaveStudent(StudentDto student)
@@ -93,5 +96,49 @@ namespace StudentPortal.Service
             };
         }
 
+        public GenericResponse registercourse(List<string> courseCodes, string matricNo)
+        {
+            logger.LogInformation("API to register course is life in action");
+            
+            Student student = db.Students.SingleOrDefault(s => s.MatricNo == matricNo);
+
+            List<Course> courseList = new List<Course>();
+            List<string> unAvailalbe = new List<string>();
+            foreach (string courseCode in courseCodes)
+            {
+                logger.LogInformation("Course Code is: " + courseCode);
+                Course course = db.Courses.Where(c=>c.Coursecode==courseCode).SingleOrDefault();
+
+                logger.LogInformation("The course  information: " + course.ToString);
+                
+                if(course == null)
+                {
+                    unAvailalbe.Add(courseCode);
+                    continue;
+                }
+                else
+                {
+                    courseList.Add(course);
+
+                }
+                
+                
+            }
+
+            Student updatedStudent = new Student()
+            {
+                Name = student.Name,
+                Courses = courseList,
+                Programme = student.Programme,
+                MatricNo = student.MatricNo,
+
+            };
+            db.Students.Update(updatedStudent);
+            db.SaveChanges();
+            return new 
+                GenericResponse("00","Courses have been added to the particular student",null,null);
+
+
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace StudentPortal
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Result> Results { get; set; }
     }
 }

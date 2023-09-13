@@ -60,5 +60,17 @@ namespace StudentPortal.Controllers
             var response = studentService.getAllStudent();
             return Ok(response);
         }
+
+
+
+        [HttpPut("/courseRegistration/{matricNo}")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public ActionResult<GenericResponse> 
+            courseRegisteration([FromBody] List<string> courseCodes,string matricNo)
+        {
+            var response = studentService.registercourse(courseCodes,matricNo);
+
+            return Accepted(response);
+        }
     }
 }
