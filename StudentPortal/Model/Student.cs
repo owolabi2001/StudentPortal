@@ -17,6 +17,7 @@ namespace StudentPortal.Model
         public string MatricNo { get; set; }
         public DateTime CreatedDate { get; set; }
         public List<Course> Courses { get; set; }
- 
+        public ICollection<StudentCourse> StudentCourses { get; set; } 
+
     }
 }

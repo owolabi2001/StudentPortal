@@ -41,6 +41,13 @@ namespace StudentPortal.Controllers
             }
             return Ok(response);
         }
+
+        [HttpGet("/courses")]
+        [ProducesResponseType(200)]
+        public ActionResult<GenericResponse> getAllCourse()
+        {
+            return Ok(courseService.getAllCourses());
+        }
     }
 
 }

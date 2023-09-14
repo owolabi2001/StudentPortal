@@ -4,6 +4,7 @@ using StudentPortal.Dto.response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using StudentPortal.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace StudentPortal.Service
 {
@@ -37,7 +38,7 @@ namespace StudentPortal.Service
                 db.Students.Add(newStudent);
                 db.SaveChanges();
 
-                
+
                 return new()
                 {
                     Code = "00",
@@ -47,7 +48,7 @@ namespace StudentPortal.Service
                 };
             }
 
-            
+
             return new()
             {
                 Code = "11",
@@ -99,46 +100,73 @@ namespace StudentPortal.Service
         public GenericResponse registercourse(List<string> courseCodes, string matricNo)
         {
             logger.LogInformation("API to register course is life in action");
-            
-            Student student = db.Students.SingleOrDefault(s => s.MatricNo == matricNo);
+
+            Student student = db.Students.FirstOrDefault(s => s.MatricNo == matricNo);
+
+            if (student == null)
+            {
+                return new GenericResponse("00", "Student " +
+                    "with matric number " + matricNo + " does not exisit",
+                    null, null
+                    );
+            }
 
             List<Course> courseList = new List<Course>();
             List<string> unAvailalbe = new List<string>();
             foreach (string courseCode in courseCodes)
             {
                 logger.LogInformation("Course Code is: " + courseCode);
-                Course course = db.Courses.Where(c=>c.Coursecode==courseCode).SingleOrDefault();
+                var course = db.Courses.Where(c => c.Coursecode == courseCode).SingleOrDefault<Course>();
 
-                logger.LogInformation("The course  information: " + course.ToString);
-                
-                if(course == null)
+                if (course == null)
                 {
                     unAvailalbe.Add(courseCode);
                     continue;
                 }
                 else
                 {
-                    courseList.Add(course);
 
+                    logger.LogInformation("The course  information: " + course.ToString);
+                    //courseList.Add(course);
+                    var studentCourse = new StudentCourse()
+                    {
+                        Course = course,
+                        Student = student
+                    };
+
+                    db.Add(studentCourse);
+                    db.SaveChanges();
                 }
-                
-                
+
+
             }
 
-            Student updatedStudent = new Student()
-            {
-                Name = student.Name,
-                Courses = courseList,
-                Programme = student.Programme,
-                MatricNo = student.MatricNo,
+            student.Courses = courseList;
+            //db.Entry(student).State = EntityState.Modified;
 
-            };
-            db.Students.Update(updatedStudent);
-            db.SaveChanges();
-            return new 
-                GenericResponse("00","Courses have been added to the particular student",null,null);
+            //db.SaveChanges();
+            return new
+                GenericResponse("00"
+                , "Courses have been added to the particular student"
+                , courseList, unAvailalbe);
 
 
+        }
+
+        public  GenericResponse findCoursesByStudent(string matricNo)
+        {
+            //var student = db.Students.FirstOrDefault(s=> s.MatricNo == matricNo);
+            var student =  db.Students
+                .Include(s => s.StudentCourses)
+                .ThenInclude(sc => sc.Course).FirstOrDefault(s=>s.MatricNo==matricNo);
+
+            var courses =  student?.StudentCourses.Select(sc => sc.Course).ToList();
+
+
+            return new("00", "the Course offered by this student is listed below: ",
+                courses,
+                student
+                );
         }
     }
 }

@@ -16,7 +16,8 @@ namespace StudentPortal.Model
 
 
         public DateTime CreatedDate { get; set; }
-        public List<Student> students { get; set; } = new();
+        public List<Student> Students { get; set; }
+        public ICollection<StudentCourse> StudentCourses{ get; set; }
 
 
     }

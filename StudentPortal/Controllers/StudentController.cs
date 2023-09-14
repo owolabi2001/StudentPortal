@@ -72,5 +72,11 @@ namespace StudentPortal.Controllers
 
             return Accepted(response);
         }
+
+        [HttpGet("/getcourses/{matricNo}")]
+        public ActionResult<GenericResponse> getCourseByStudent(string matricNo)
+        {
+            return Ok(studentService.findCoursesByStudent(matricNo));
+        }
     }
 }

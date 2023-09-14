@@ -76,5 +76,11 @@ namespace StudentPortal.Service
                 MetaData = null
             };
         }
+
+        public GenericResponse getAllCourses()
+        {
+            List<Course> courseList = db.Courses.ToList();
+            return new("00", "List of all course", courseList, null);
+        }
     }
 }
